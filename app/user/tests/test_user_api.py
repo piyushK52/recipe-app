@@ -36,13 +36,16 @@ class PublicUserApiTests(TestCase):
 
     def test_user_exists(self):
         """Test creating a user that already exists fails"""
-        payload = {'email': 'test@newapp.com', 'password': 'testpass', 'name': 'Test name'}
+        payload = {
+            'email': 'test@newapp.com',
+            'password': 'testpass',
+            'name': 'Test name'
+        }
         create_user(**payload)
 
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_password_too_short(self):
         """Test that the password must be more than 5 characters"""
@@ -55,7 +58,6 @@ class PublicUserApiTests(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
-    
     def test_create_token_for_user(self):
         """Test that a token is created for the user"""
         payload = {'email': 'test@newapp.com', 'password': 'testpass'}
@@ -76,7 +78,7 @@ class PublicUserApiTests(TestCase):
 
     def test_create_token_no_user(self):
         """Test that token is not created if user doesn't exist"""
-        payload = {'email':'test@newapp.com', 'password':'testpass'}
+        payload = {'email': 'test@newapp.com', 'password': 'testpass'}
         res = self.client.post(TOKEN_URL, payload)
 
         self.assertNotIn('token', res.data)
@@ -84,7 +86,7 @@ class PublicUserApiTests(TestCase):
 
     def test_create_token_missing_field(self):
         """Test that email and password are required"""
-        res = self.client.post(TOKEN_URL, {'email':'one', 'password':''})
+        res = self.client.post(TOKEN_URL, {'email': 'one', 'password': ''})
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -97,7 +99,7 @@ class PublicUserApiTests(TestCase):
 
 class PrivateUserApiTests(TestCase):
     """Test API requests that require authentication"""
-    
+
     def setUp(self):
         self.user = create_user(
             email='test@newapp.com',
